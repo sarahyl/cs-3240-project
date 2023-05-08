@@ -1,0 +1,528 @@
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+
+<!DOCTYPE html>
+
+<link rel="stylesheet" href="{% static 'scheduleadvisor/style.css' %}">
+
+<!--
+
+
+    citations
+
+
+    scrollable columns https://stackoverflow.com/questions/35025164/how-can-i-create-scrollable-columns-in-bootstrap
+    
+-->
+
+<html> 
+    <head>
+
+        <nav class="navbar navbar-expand-lg px-4">
+            <a class="navbar-brand">Schedule Advisor</a>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item nav-link">
+                        <a class="nav-item nav-link active" href="{% url 'scheduleadvisor:student' %}">Home</a>
+                    </li>
+                    <li class="nav-item nav-link">
+                        <a class="nav-item nav-link" href="{% url 'scheduleadvisor:search' %}">Search Courses</a>
+                    </li>
+                    <li class="nav-item nav-link">
+                        <a class="nav-item nav-link" href="{% url 'scheduleadvisor:cart' %}">Cart</a>
+                    </li>
+                    <li class="nav-item nav-link">
+                        <a class="nav-item nav-link" href="{% url 'scheduleadvisor:schedules' %}">Schedules</a>
+                    </li>
+                </ul>
+            </div>
+            <span class="navbar-text px-5" >
+                <a href="/logout">Logout</a>
+            </span>
+        </nav>
+
+        <div class="mx-3 pt-3">
+
+            <div class="row">
+                <div class="col-1">
+                    <form action="{% url 'scheduleadvisor:button_to_schedules' %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-primary" value="Done">
+                    </form>
+                </div>
+               
+
+            </div>
+        </div>
+
+    </head>
+
+    <body class="bg-opacity-5">
+        <div class="container-fluid d-flex flex-column">
+            <!-- schedule column -->
+            <h4 class="text-center">Schedule: {{schedule}}</h4>
+            <div class="container row mx-auto my-auto border px-4 h-100 bg-light">
+                <!-- each column of this row is day of the week -->
+                <div class="row">
+                    <div class="col">
+                        <h5>Monday</h5>
+                        <div>
+                            {% for course in mondaycourses %}
+                            <div class="bg-info bg-opacity-10 border border-white border-opacity-25 border-3 shadow-sm py-2 px-1 my-2 mx-2">
+                                <div>
+                                    <!-- button to delete course from schedule -->
+                                    <form class="form" action="{% url 'scheduleadvisor:delete_course_from_schedule' schedule_id %}" method="post">
+                                        {% csrf_token %}
+                                        <label><b>{{ course }}</b></label>
+                                        <button type="submit" name="delete_schedulecourse" value="{{ course.class_number }}" class="btn-close"></button>
+                                    </form>
+                                </div>
+                                {% if course.title != "" %}
+                                    <div class="my-1"><b>{{ course.title }}</b></div>
+                                {% endif %}
+                                {% if course.topic != "" %}
+                                    <div class="my-1"><b>{{ course.topic }}</b></div>
+                                {% endif %}
+                                <div>
+                                    {{ course.instructors }}
+                                </div>
+                                <div>
+                                    {{ course.start_time }} - {{ course.end_time }}
+                                </div>
+                                <div>
+                                    {{ course.classroom }}
+                                </div>
+                                <div>
+                                    {{ course.enrollment_status }}
+                                </div>
+
+                                <!-- class details button -->
+                                <div class="col-1 my-2">
+                            
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ course.id }}">Details</button>
+                                    <div class="modal fade mx-3" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="modal{{ course.id }}">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <div><h5>{{ course }}</h5></div>
+                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="my-3 mx-3">
+                                                    {% if course.topic != "" %}
+                                                        <div class="my-1"><b>Topic:</b> {{ course.topic }}</div>
+                                                    {% endif %}
+                                                    {% if course.title != "" %}
+                                                        <div class="my-1"><b>Title:</b> {{ course.title }}</div>
+                                                    {% endif %}
+                                                    <div class="my-1"><b>Subject:</b> {{ course.subject_description }}</div>
+                                                    <div class="my-1"><b>Career:</b> {{ course.acad_career_descr }}</div>
+                                                    <div class="my-1"><b>Section Type:</b> {{ course.section_type }}</div>
+                                                    <div class="my-1"><b>Instructors:</b> {{ course.instructors }}</div>
+                                                    <div class="my-1"><b>Meetings</b>: {{ course.days }} {{ course.start_time }}-{{ course.end_time }}</div>
+                                                    <div class="my-1"><b>Classroom:</b> {{ course.classroom }}</div>
+                                                    <div class="my-1"><b>Units:</b> {{ course.units }}</div>
+                                                    <div class="my-1"><b>Enrollment Status:</b> {{ course.enrollment_status }} (Seats filled: {{course.enrollment_total}}/{{course.class_capacity}})</div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h5>Tuesday</h5>
+                        <div>
+                            {% for course in tuesdaycourses %}
+                                <div class="bg-info bg-opacity-10 border border-white border-opacity-25 border-3 shadow-sm py-2 px-1 my-2 mx-2">
+                                    <div>
+                                        <!-- button to delete course from schedule -->
+                                        <form class="form-group" action="{% url 'scheduleadvisor:delete_course_from_schedule' schedule_id %}" method="post">
+                                            {% csrf_token %}
+                                            <label><b>{{ course }}</b></label>
+                                            <button type="submit" name="delete_schedulecourse" value="{{ course.class_number }}" class="btn-close"></button>
+                                        </form>
+                                    </div>
+                                    {% if course.title != "" %}
+                                        <div class="my-1"><b>{{ course.title }}</b></div>
+                                    {% endif %}
+                                    {% if course.topic != "" %}
+                                        <div class="my-1"><b>{{ course.topic }}</b></div>
+                                    {% endif %}
+                                    <div>
+                                        {{ course.instructors }}
+                                    </div>
+                                    <div>
+                                        {{ course.start_time }} - {{ course.end_time }}
+                                    </div>
+                                    <div>
+                                        {{ course.classroom }}
+                                    </div>
+                                    <div>
+                                        {{ course.enrollment_status }}
+                                    </div>
+
+                                    <!-- class details button -->
+                                    <div class="col-1 my-2">
+                                
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ course.id }}">Details</button>
+                                        <div class="modal fade mx-3" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="modal{{ course.id }}">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <div><h5>{{ course }}</h5></div>
+                                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="my-3 mx-3">
+                                                        <div class="">
+                                                            {% if course.topic != "" %}
+                                                                <div class="my-1"><b>Topic:</b> {{ course.topic }}</div>
+                                                            {% endif %}
+                                                            {% if course.title != "" %}
+                                                                <div class="my-1"><b>Title:</b> {{ course.title }}</div>
+                                                            {% endif %}
+                                                            <div class="my-1"><b>Subject:</b> {{ course.subject_description }}</div>
+                                                            <div class="my-1"><b>Career:</b> {{ course.acad_career_descr }}</div>
+                                                            <div class="my-1"><b>Section Type:</b> {{ course.section_type }}</div>
+                                                            <div class="my-1"><b>Instructors:</b> {{ course.instructors }}</div>
+                                                        </div>
+                                                        <div class="">
+                                                            <div class="my-1"><b>Meetings</b>: {{ course.days }} {{ course.start_time }}-{{ course.end_time }}</div>
+                                                            <div class="my-1"><b>Classroom:</b> {{ course.classroom }}</div>
+                                                            <div class="my-1"><b>Units:</b> {{ course.units }}</div>
+                                                            <div class="my-1"><b>Enrollment Status:</b> {{ course.enrollment_status }} (Seats filled: {{course.enrollment_total}}/{{course.class_capacity}})</div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h5>Wednesday</h5>
+                        <div >
+                            {% for course in wednesdaycourses %}
+                                <div class="bg-info bg-opacity-10 border border-white border-opacity-25 border-3 shadow-sm py-2 px-1 my-2 mx-2">
+                                    <div>
+                                        <!-- button to delete course from schedule -->
+                                        <form class="form-group" action="{% url 'scheduleadvisor:delete_course_from_schedule' schedule_id %}" method="post">
+                                            {% csrf_token %}
+                                            <label><b>{{ course }}</b></label>
+                                            <button type="submit" name="delete_schedulecourse" value="{{ course.class_number }}" class="btn-close"></button>
+                                        </form>
+                                    </div>
+                                    {% if course.title != "" %}
+                                        <div class="my-1"><b>{{ course.title }}</b></div>
+                                    {% endif %}
+                                    {% if course.topic != "" %}
+                                        <div class="my-1"><b>{{ course.topic }}</b></div>
+                                    {% endif %}
+                                    <div>
+                                        {{ course.instructors }}
+                                    </div>
+                                    <div>
+                                        {{ course.start_time }} - {{ course.end_time }}
+                                    </div>
+                                    <div>
+                                        {{ course.classroom }}
+                                    </div>
+                                    <div>
+                                        {{ course.enrollment_status }}
+                                    </div>
+                                    <!-- class details button -->
+                                    <div class="col-1 my-2">
+                                
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ course.id }}">Details</button>
+                                        <div class="modal fade mx-3" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="modal{{ course.id }}">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <div><h5>{{ course }}</h5></div>
+                                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="my-3 mx-3">
+                                                        <div class="">
+                                                            {% if course.topic != "" %}
+                                                                <div class="my-1"><b>Topic:</b> {{ course.topic }}</div>
+                                                            {% endif %}
+                                                            {% if course.title != "" %}
+                                                                <div class="my-1"><b>Title:</b> {{ course.title }}</div>
+                                                            {% endif %}
+                                                            <div class="my-1"><b>Subject:</b> {{ course.subject_description }}</div>
+                                                            <div class="my-1"><b>Career:</b> {{ course.acad_career_descr }}</div>
+                                                            <div class="my-1"><b>Section Type:</b> {{ course.section_type }}</div>
+                                                            <div class="my-1"><b>Instructors:</b> {{ course.instructors }}</div>
+                                                        </div>
+                                                        <div class="">
+                                                            <div class="my-1"><b>Meetings</b>: {{ course.days }} {{ course.start_time }}-{{ course.end_time }}</div>
+                                                            <div class="my-1"><b>Classroom:</b> {{ course.classroom }}</div>
+                                                            <div class="my-1"><b>Units:</b> {{ course.units }}</div>
+                                                            <div class="my-1"><b>Enrollment Status:</b> {{ course.enrollment_status }} (Seats filled: {{course.enrollment_total}}/{{course.class_capacity}})</div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h5>Thursday</h5>
+                        <div>
+                            {% for course in thursdaycourses %}
+                                <div class="bg-info bg-opacity-10 border border-white border-opacity-25 border-3 shadow-sm py-2 px-1 my-2 mx-2">
+                                    <div>
+                                        <!-- button to delete course from schedule -->
+                                        <form class="form-group" action="{% url 'scheduleadvisor:delete_course_from_schedule' schedule_id %}" method="post">
+                                            {% csrf_token %}
+                                            <label><b>{{ course }}</b></label>
+                                            <button type="submit" name="delete_schedulecourse" value="{{ course.class_number }}" class="btn-close"></button>
+                                        </form>
+                                    </div>
+                                    {% if course.title != "" %}
+                                        <div class="my-1"><b>{{ course.title }}</b></div>
+                                    {% endif %}
+                                    {% if course.topic != "" %}
+                                        <div class="my-1"><b>{{ course.topic }}</b></div>
+                                    {% endif %}
+                                    <div>
+                                        {{ course.instructors }}
+                                    </div>
+                                    <div>
+                                        {{ course.start_time }} - {{ course.end_time }}
+                                    </div>
+                                    <div>
+                                        {{ course.classroom }}
+                                    </div>
+                                    <div>
+                                        {{ course.enrollment_status }}
+                                    </div>
+                                    <!-- class details button -->
+                                    <div class="col-1 my-2">
+                                
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ course.id }}">Details</button>
+                                        <div class="modal fade mx-3" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="modal{{ course.id }}">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <div><h5>{{ course }}</h5></div>
+                                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="my-3 mx-3">
+                                                        <div class="">
+                                                            {% if course.topic != "" %}
+                                                                <div class="my-1"><b>Topic:</b> {{ course.topic }}</div>
+                                                            {% endif %}
+                                                            {% if course.title != "" %}
+                                                                <div class="my-1"><b>Title:</b> {{ course.title }}</div>
+                                                            {% endif %}
+                                                            <div class="my-1"><b>Subject:</b> {{ course.subject_description }}</div>
+                                                            <div class="my-1"><b>Career:</b> {{ course.acad_career_descr }}</div>
+                                                            <div class="my-1"><b>Section Type:</b> {{ course.section_type }}</div>
+                                                            <div class="my-1"><b>Instructors:</b> {{ course.instructors }}</div>
+                                                        </div>
+                                                        <div class="">
+                                                            <div class="my-1"><b>Meetings</b>: {{ course.days }} {{ course.start_time }}-{{ course.end_time }}</div>
+                                                            <div class="my-1"><b>Classroom:</b> {{ course.classroom }}</div>
+                                                            <div class="my-1"><b>Units:</b> {{ course.units }}</div>
+                                                            <div class="my-1"><b>Enrollment Status:</b> {{ course.enrollment_status }} (Seats filled: {{course.enrollment_total}}/{{course.class_capacity}})</div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h5>Friday</h5>
+                        <div>
+                            {% for course in fridaycourses %}
+                                <div class="bg-info bg-opacity-10 border border-white border-opacity-25 border-3 shadow-sm py-2 px-1 my-2 mx-2">
+                                    <div>
+                                        <!-- button to delete course from schedule -->
+                                        <form class="form-group" action="{% url 'scheduleadvisor:delete_course_from_schedule' schedule_id %}" method="post">
+                                            {% csrf_token %}
+                                            <label><b>{{ course }}</b></label>
+                                            <button type="submit" name="delete_schedulecourse" value="{{ course.class_number }}" class="btn-close"></button>
+                                        </form>
+                                    </div>
+                                    {% if course.title != "" %}
+                                        <div class="my-1"><b>{{ course.title }}</b></div>
+                                    {% endif %}
+                                    {% if course.topic != "" %}
+                                        <div class="my-1"><b>{{ course.topic }}</b></div>
+                                    {% endif %}
+                                    <div>
+                                        {{ course.instructors }}
+                                    </div>
+                                    <div>
+                                        {{ course.start_time }} - {{ course.end_time }}
+                                    </div>
+                                    <div>
+                                        {{ course.classroom }}
+                                    </div>
+                                    <div>
+                                        {{ course.enrollment_status }}
+                                    </div>
+                                    <!-- class details button -->
+                                    <div class="col-1 my-2">
+                                
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ course.id }}">Details</button>
+                                        <div class="modal fade mx-3" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="modal{{ course.id }}">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <div><h5>{{ course }}</h5></div>
+                                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="my-3 mx-3">
+                                                        <div class="">
+                                                            {% if course.topic != "" %}
+                                                                <div class="my-1"><b>Topic:</b> {{ course.topic }}</div>
+                                                            {% endif %}
+                                                            {% if course.title != "" %}
+                                                                <div class="my-1"><b>Title:</b> {{ course.title }}</div>
+                                                            {% endif %}
+                                                            <div class="my-1"><b>Subject:</b> {{ course.subject_description }}</div>
+                                                            <div class="my-1"><b>Career:</b> {{ course.acad_career_descr }}</div>
+                                                            <div class="my-1"><b>Section Type:</b> {{ course.section_type }}</div>
+                                                            <div class="my-1"><b>Instructors:</b> {{ course.instructors }}</div>
+                                                        </div>
+                                                        <div class="">
+                                                            <div class="my-1"><b>Meetings</b>: {{ course.days }} {{ course.start_time }}-{{ course.end_time }}</div>
+                                                            <div class="my-1"><b>Classroom:</b> {{ course.classroom }}</div>
+                                                            <div class="my-1"><b>Units:</b> {{ course.units }}</div>
+                                                            <div class="my-1"><b>Enrollment Status:</b> {{ course.enrollment_status }} (Seats filled: {{course.enrollment_total}}/{{course.class_capacity}})</div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <h4 class="my-3 text-center">Add courses from shopping cart</h4>
+            <!-- add courses from shopping cart column -->
+            <div class="container col-7 mx-auto border h-50 border border-light border-3 rounded-3" style="overflow-y: scroll;">
+                <div class=" ">
+                    {% if cartcourses %}  
+                        {% for cartcourse in cartcourses %}
+                            <form action="{% url 'scheduleadvisor:add_course_to_schedule' schedule_id %}" method="post">
+                                {% csrf_token %}
+                                <div class="my-4 bg-info bg-opacity-10 border border-light border-3 shadow-sm py-3 px-3">
+                                    <div>
+                                        <b>{{ cartcourse }}</b>:
+                                    </div>
+                                    {% if cartcourse.title != "" %}
+                                        <div class="my-1"><b>{{ cartcourse.title }}</b></div>
+                                    {% endif %}
+                                    {% if cartcourse.topic != "" %}
+                                        <div class="my-1"><b>{{ cartcourse.topic }}</b></div>
+                                    {% endif %}
+                                    <div>
+                                        Instructor(s): {{ cartcourse.instructors }}
+                                    </div>
+                                    <div>
+                                        {{cartcourse.classroom}}, {{ cartcourse.days }} {{ cartcourse.start_time }} - {{ cartcourse.end_time }}
+                                    </div>
+                                    <div>
+                                        {{ cartcourse.enrollment_status }}
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <!-- class details button -->
+                                            <div class="my-2">
+                                        
+                                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ cartcourse.id }}">Details</button>
+                                                <div class="modal fade mx-3" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="modal{{ cartcourse.id }}">
+                                                    <div class="modal-dialog modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <div><h5>{{ cartcourse }}</h5></div>
+                                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="my-3 mx-3">
+                                                                <div class="">
+                                                                    
+                                                                    {% if cartcourse.topic != "" %}
+                                                                        <div class="my-1"><b>Topic:</b> {{ cartcourse.topic }}</div>
+                                                                    {% endif %}
+                                                                    {% if cartcourse.title != "" %}
+                                                                        <div class="my-1"><b>Title:</b> {{ cartcourse.title }}</div>
+                                                                    {% endif %}
+                                                                    <div class="my-1"><b>Subject:</b> {{ cartcourse.subject_description }}</div>
+                                                                    <div class="my-1"><b>Career:</b> {{ cartcourse.acad_career_descr }}</div>
+                                                                    <div class="my-1"><b>Section Type:</b> {{ cartcourse.section_type }}</div>
+                                                                    <div class="my-1"><b>Instructors:</b> {{ cartcourse.instructors }}</div>
+                                                                </div>
+                                                                <div class="">
+                                                                    <div class="my-1"><b>Meetings</b>: {{ cartcourse.days }} {{ cartcourse.start_time }}-{{ cartcourse.end_time }}</div>
+                                                                    <div class="my-1"><b>Classroom:</b> {{ cartcourse.classroom }}</div>
+                                                                    <div class="my-1"><b>Units:</b> {{ cartcourse.units }}</div>
+                                                                    <div class="my-1"><b>Enrollment Status:</b> {{ cartcourse.enrollment_status }} (Seats filled: {{cartcourse.enrollment_total}}/{{cartcourse.class_capacity}})</div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button class="btn btn-primary btn-sm mt-2" type="submit" name="schedulecourse_classnumber" value="{{ cartcourse.class_number }}">Add to Schedule</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center">
+                            <p>Your shopping cart is empty.</p>
+                            <a class="btn btn-primary btn-sm" href="{% url 'scheduleadvisor:search' %}">Search for Courses</a>    
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <br>
+        </div>
+    </body>
+
+</html>
+
+
+<!-- https://sisuva.admin.virginia.edu/psc/ihprd/UVSS/SA/s/WEBLIB_HCX_CM.H_CLASS_SEARCH.FieldFormula.IScript_ClassSearch?institution=UVA01&subject=search_value -->

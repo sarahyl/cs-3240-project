@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+
+<!--
+
+Citations
+
+redirecting code: https://stackoverflow.com/questions/27660467/how-to-do-2-continuous-redirect-in-django
+
+-->
+
+<link rel="stylesheet" href="{% static 'scheduleadvisor/style.css' %}">
+
+<html>
+    <body>
+        <div class="container w-75 mx-auto my-5">
+            <p>Not authorized to visit this page.</p>
+            <p>Redirecting to home page...</p>
+        </div>
+
+    </body>
+</html>
+
+<script>
+    window.setTimeout(function(){
+      window.location.href = "/";
+    }, 3000);
+</script>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+
+<!--  
+
+    Citations
+
+    javascript cart button https://www.youtube.com/watch?v=woORrr3QNh8&list=PL-51WBLyFTg0omnamUjL1TCVov7yDTRng&index=3
+
+
+-->
+
+<html>
+    <head>
+        <link rel ="stylesheet" href = "{% static 'scheduleadvisor/style.css' %}">
+        <nav class="navbar navbar-expand-lg">
+            <a class="px-4 navbar-brand">Schedule Advisor</a>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item nav-link">
+                        <a class="nav-item nav-link active" href="{% url 'scheduleadvisor:student' %}">Home</a>
+                    </li>
+                    <li class="nav-item nav-link">
+                        <a class="nav-item nav-link" href="{% url 'scheduleadvisor:search' %}">Search Courses</a>
+                    </li>
+                    <li class="nav-item nav-link">
+                        <a class="nav-item nav-link" href="{% url 'scheduleadvisor:cart' %}">Cart</a>
+                    </li>
+                    <li class="nav-item nav-link">
+                        <a class="nav-item nav-link" href="{% url 'scheduleadvisor:schedules' %}">Schedules</a>
+                    </li>
+                </ul>
+            </div>
+            <span class="navbar-text px-5" >
+                <a href="/logout">Logout</a>
+            </span>
+        </nav>
+        
+
+        <script type="text/javascript">
+            //cookie for shopping cart in cart.js
+            function getToken(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getToken('csrftoken');
+        </script>
+    </head>
+
+    <body>
+        <div class="container w-75 bg-light mx-auto pt-3 px-3 py-3 mx-5 my-5 border">
+            <h4 class="text-center">Shopping Cart</h4>
+            <!-- outputting all of the courses -->
+            {% if courses %}
+                {% for course in courses %}
+                    <div class="my-5 mx-3 py-2 px-2 bg-white border shadow-sm">
+            
+                    <div class="my-1">
+                        <h5>
+                            <b>{{ course }}</b>
+                        </h5>
+                        {% if course.title != "" and course.topic != "" %}
+                            <div class="my-1"><b>{{course.title}} - {{course.topic}}</b></div>
+                        {% else %}
+                            {% if course.title != "" %}
+                                <div class="my-1"><b>{{ course.title }}</b></div>
+                            {% endif %}
+                            {% if course.topic != "" %}
+                                <div class="my-1"><b>{{ course.topic }}</b></div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="my-1 "><b>Subject:</b> {{ course.subject_description }}</div>
+                            <div class="my-1"><b>Career:</b> {{ course.acad_career_descr }}</div>
+                            <div class="my-1"><b>Section Type:</b> {{ course.section_type }}</div>
+                            <div class="my-1"><b>Instructors:</b> {{ course.instructors }}</div>
+                        </div>
+                        <div class="col">
+                            <div class="my-1"><b>Meetings</b>: {{ course.days }} {{ course.start_time }}-{{ course.end_time }}</div>
+                            <div class="my-1"><b>Classroom:</b> {{ course.classroom }}</div>
+                            <div class="my-1"><b>Units:</b> {{ course.units }}</div>
+                            <div class="my-1"><b>Enrollment Status:</b> {{ course.enrollment_status }} (Seats filled: {{course.enrollment_total}}/{{course.class_capacity}})</div>
+                        </div>
+                    </div>
+                    <button data-course={{course.class_number}} data-action="delete_course" class="btn btn-danger update-cart my-2">Delete from Cart</button>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center my-3">
+                    <p>Your shopping cart is empty.</p>
+                    <a class="btn btn-primary btn-sm" href="{% url 'scheduleadvisor:search' %}">Search for Courses</a>
+                </div>
+            {% endif %}
+        </div>
+        <!-- for the cart buttons -->
+        <script type="text/javascript" src="{% static 'scheduleadvisor/js/cart.js' %}"></script>
+    </body>
+</html>

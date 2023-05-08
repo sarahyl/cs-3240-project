@@ -1,0 +1,96 @@
+body {
+    background-color: #EEE2DC;
+    }
+    
+    .navbar{
+    background-color: #123C69;    
+    } 
+    
+    .navbar-brand {
+        color: #EEE2DC;
+    }
+    .navbar-text a {
+        color: #EEE2DC;
+    }
+    
+    .nav-link {
+        color: #EEE2DC;
+    }
+    
+    .container {
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px #123C69;
+    }
+    
+    h4 {
+    color: #123C69;
+    margin-bottom: 20px;
+    }
+    
+    p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    }
+    .navbar-brand:hover{
+        color:#EEE2DC!important;
+    }
+    a:hover{
+        color:#f3b899!important;
+    }
+    .nav-item:hover{
+        color:#f3b899!important;
+    }
+
+    .btn{
+        margin-right: 20px;
+    }
+    .btn-primary{
+        background-color: #123C69 !important; 
+        border-color: #123C69 !important;
+        
+    }
+
+    .btn-outline-primary{
+        background-color: transparent ; 
+        border-color: #123C69 !important;
+        color: #123C69 ;
+    }
+    .btn-outline-primary:hover{
+        background-color:#123C69 ; 
+        border-color: #123C69 !important;
+        color: white ;
+    }
+    .btn-outline-primary:active{
+        background-color:#123C69 !important; 
+        border-color: #123C69 !important;
+        color: white ;
+    }
+    .btn-outline-primary:focus{
+        background-color:#123C69!important ; 
+        border-color: #123C69 !important;
+        color: white ;
+    }
+    .btn-danger{
+        background-color: transparent;
+        border-color: #AC3B61 !important;
+        color: #AC3B61 !important;
+    }
+    .btn-danger:hover{
+        background-color:#AC3B61 ; 
+        border-color: #AC3B61 !important;
+        color: white !important;
+    }
+    .btn-danger:active{
+        background-color:#AC3B61 !important; 
+        border-color: #AC3B61 !important;
+        color: white ;
+    }
+    .btn-danger:focus{
+        background-color:#AC3B61!important ; 
+        border-color: #AC3B61 !important;
+        color: white ;
+    }
+

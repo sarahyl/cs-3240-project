@@ -1,0 +1,42 @@
+body {
+background-color: #EEE2DC;
+}
+
+.navbar{
+background-color: #123C69;    
+} 
+
+.navbar-brand {
+    color: #EEE2DC;
+}
+.navbar-text a {
+    color: #EEE2DC;
+}
+
+.nav-link {
+    color: #EEE2DC;
+}
+
+.container {
+background-color: #f0f0f0;
+padding: 20px;
+margin-top: 20px;
+border-radius: 10px;
+box-shadow: 5px 5px 5px #123C69;
+}
+
+h4 {
+color: #123C69;
+margin-bottom: 20px;
+}
+
+p {
+font-size: 16px;
+margin-bottom: 20px;
+}
+.navbar-brand:hover{
+    color:#EEE2DC!important;
+}
+a:hover{
+    color:#f9f4f1!important;
+}

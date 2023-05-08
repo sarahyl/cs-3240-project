@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bottstrap-icons@1.5.0/font/bootstrap-icons.css">
+<link rel="stylesheet" type="text/css" href="{% static 'scheduleadvisor/style.css' %}">
+
+<html>
+<body>
+
+    <div class="page ml-5 my-3">
+
+        <div class="sidenav">
+            <p>Schedule Advisor</p>
+            <a href="advisorindex">Awaiting Schedules</a>
+            <a href="/approved">Approved Schedules</a>
+            <a href="/rejected">Rejected Schedules</a>
+            <a href="/advisees">Advisees</a>
+            <a href="/logout">Logout</a>
+        </div>
+
+        <div class="container w-75 my-4">
+            <h4 class="text-center"><u>Your Advisees</u></h4>
+            {% if advisees %}
+                {% for advisee in advisees %}
+                    <div class="container bg-white shadow-sm px-3 py-3">
+                        {{ advisee }} ({{ advisee.email }})
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-center">You do not currently have any advisees.</p>
+            {% endif %}
+        </div>
+
+        
+        <div class="container w-75 my-4">
+            <h4 class="text-center"><u>Students Without An Advisor</u></h4>
+            {% if students_without_advisor %}
+                {% for student in students_without_advisor %}
+                <div class="container bg-white shadow-sm px-3 py-3">
+                    <form action="{% url 'scheduleadvisor:add_student_as_advisee' student.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <label class="col-8">{{student}} ({{student.email}})</label>
+                            <input class="col-3 float-end btn btn-sm btn-primary mx-3" type="submit" value="Add Student as Advisee">    
+                        </div>
+                    </form>
+                </div>
+                {% endfor %}
+            {% else %}
+                There are no students without an advisor.
+            {% endif %}
+        </div>
+
+
+    </div>
+</body>
+<style>
+    header {
+        width: 100%;
+        text-align:left;
+        padding: 5px 5px 10px 5px;
+        margin-left: 160px; /* Same as the width of the sidenav */
+    }
+    
+    .schedTable {
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    th, td {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    
+    th {
+        background-color:gray;
+    }
+    
+    
+    tr:nth-child(even) {background-color: #f2f2f2;}
+    
+    button {
+        border: none;
+        padding: 5px 5px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+    
+    .accept {
+        background-color: green;
+        color: white;
+    }
+    
+    .reject {
+        background-color: red;
+        color: white;
+    }
+    
+    .sidenav {
+        height: 100%;
+        width: 160px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #123C69;
+        overflow-x: hidden;
+        padding-top: 20px;;
+    }
+    
+    .sidenav a {
+        padding: 16px 10px 10px 16px;
+        text-align:center;
+        text-decoration:none;
+        font-size: 17px;
+        color: white;
+        display: block;
+    }
+    
+    .sidenav p {
+        padding: 16px 10px 10px 16px;
+        text-align:center;
+        text-decoration:none;
+        font-size: 25px;
+        color: white;
+        display: block;
+    }
+    
+    .sidenav a:hover {
+      color: blue;
+    }
+    
+    .page {
+      margin-left: 160px; /* Same as the width of the sidenav */
+      padding: 10px 10px 10px 30px;
+    
+    }
+    
+    
+    </style>
+    

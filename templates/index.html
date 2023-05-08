@@ -1,0 +1,35 @@
+{% load socialaccount %}
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+
+<!--
+
+Citations
+
+Flex https://getbootstrap.com/docs/4.3/utilities/flex/
+
+AllAuth https://www.section.io/engineering-education/django-google-oauth/ 
+
+-->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bottstrap-icons@1.5.0/font/bootstrap-icons.css">
+<link rel="stylesheet" type="text/css" href="{% static 'scheduleadvisor/style.css' %}">
+<html>
+    <body>
+        <div class="d-flex flex-column h-75 justify-content-center align-items-center container text-center bg-white py-3 px-3 my-5 mx-auto">
+            <h1 class="text-center my-3 mx-3">Schedule Advisor</h1>
+
+            <img src="static\scheduleadvisor\images\schedule.jpg" alt="clipart of a schedule" class="rounded mx-auto d-block my-3" style="max-height: 100px;">
+
+            {% if user.is_authenticated %}
+                <p>Welcome, you are logged in as {{ user.username }}</p> 
+            {% else %}
+                <a class="btn btn-primary mx-auto" href="{% provider_login_url 'google' %}">Login With Google</a>
+            {% endif %}
+        </div>
+
+    </body>
+</html>

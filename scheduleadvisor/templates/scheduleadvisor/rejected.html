@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'scheduleadvisor/style.css' %}">
+
+<html>
+<body>
+
+    <div class="page">
+
+        <div class="sidenav">
+            <p>Schedule Advisor</p>
+            <a href="/advisorindex">Awaiting Schedules</a>
+            <a href="approved">Approved Schedules</a>
+            <a href="/rejected">Rejected Schedules</a>
+            <a href="/advisees">Advisees</a>
+            <a href="/logout">Logout</a>
+        </div>
+
+        <!--
+        Table view for Advisor. Displays Student Name, Credits in schedule
+        Last column displays ability for advisor to accept or reject a schedule
+        When rejected is clicked, advisor will be prompted to comment on why. Comment will be sent to student view
+        When button is clicked, schedule will disappear from table
+        -->
+
+        <div class="container w-75 my-4">
+            <h4 class="text-center"><u>Rejected Schedules</u></h4>
+                {% if rejectedschedules %}
+                    <div class="schedTable container shadow-sm border bg-light">
+                        <table class="mx-auto">
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Schedule</th>
+                            <th>Credits in Schedule</th>
+                            <th>Status</th>
+                        </tr>
+                        {% for schedule in rejectedschedules %}
+                            <tr>
+                                <td>{{ schedule.0.schedule.student }}</td>
+                                <td>
+                                    <div class="col-1">
+                                        <button type="button" class="btn btn-primary mx-auto" data-bs-toggle="modal" data-bs-target="#modal{{ schedule.0.schedule.id }}">Schedule</button>
+                                        <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="modal{{ schedule.0.schedule.id }}">
+                                            <div class="modal-dialog modal-xl">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">{{ schedule.0.schedule.student }}</h5>
+                                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- the courses  -->
+                                                    {% for course in schedule %}
+                                                    <div class="my-3">
+                                                        <div>
+                                                            <b>{{ course }}</b>
+                                                        </div>
+                                                        <div>
+                                                            {{ course.title }} {{ course.topic }}
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{schedule.0.schedule.credits}}</td>
+                                <td>Rejected</td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                    </div>
+                {% else %}
+                <div class="container text-center shadow-sm border bg-light">
+                    There are no rejected schedules.
+                </div>
+                {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>
+
+<script>
+
+document.getElementById("reject").innerHTML = localStorage.getItem('reason')
+
+</script>
+
+<style>
+header {
+    width: 100%;
+    text-align:left;
+    padding: 5px 5px 10px 5px;
+    margin-left: 160px; /* Same as the width of the sidenav */
+}
+
+.schedTable {
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th, td {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+th {
+    background-color:gray;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+button {
+    border: none;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.accept {
+    background-color: green;
+    color: white;
+}
+
+.reject {
+    background-color: red;
+    color: white;
+}
+
+.sidenav {
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #123C69;
+    overflow-x: hidden;
+    padding-top: 20px;;
+}
+
+.sidenav a {
+    padding: 16px 10px 10px 16px;
+    text-align:center;
+    text-decoration:none;
+    font-size: 17px;
+    color: white;
+    display: block;
+}
+
+.sidenav p {
+    padding: 16px 10px 10px 16px;
+    text-align:center;
+    text-decoration:none;
+    font-size: 25px;
+    color: white;
+    display: block;
+}
+
+.sidenav a:hover {
+  color: blue;
+}
+
+.page {
+  margin-left: 160px; /* Same as the width of the sidenav */
+  padding: 10px 10px 10px 30px;
+
+}
+
+
+</style>
